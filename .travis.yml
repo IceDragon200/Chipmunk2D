@@ -1,0 +1,2 @@
+script:
+  - "mkdir -p build && cd build && cmake .. -DBUILD_DEMOS=OFF && make"

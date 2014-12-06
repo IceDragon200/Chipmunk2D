@@ -1,4 +1,4 @@
-!http://files.slembcke.net/chipmunk/logo/logo1_med.png!
+!http://files.slembcke.net/chipmunk/logo/logo1_med.png! !https://travis-ci.org/IceDragon200/Chipmunk2D.svg?branch=master!:https://travis-ci.org/IceDragon200/Chipmunk2D
 
 h2. NEW IN CHIPMUNK 7
 
