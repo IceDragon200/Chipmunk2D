@@ -1,15 +1,15 @@
 /* Copyright (c) 2007 Scott Lembcke
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -55,51 +55,51 @@ ChipmunkDemoTextInit(void)
 		attribute vec2 vertex;
 		attribute vec2 tex_coord;
 		attribute vec4 color;
-		
+
 		varying vec2 v_tex_coord;
 		varying vec4 v_color;
-		
+
 		void main(void){
 			// TODO: get rid of the GL 2.x matrix bit eventually?
 			gl_Position = gl_ModelViewProjectionMatrix*vec4(vertex, 0.0, 1.0);
-			
+
 			v_color = color;
 			v_tex_coord = tex_coord;
 		}
 	));
-	
+
 	GLint fshader = CompileShader(GL_FRAGMENT_SHADER, GLSL(
 		uniform sampler2D u_texture;
-		
+
 		varying vec2 v_tex_coord;
 		varying vec4 v_color;
-		
+
 		float aa_step(float t1, float t2, float f)
 		{
 			//return step(t2, f);
 			return smoothstep(t1, t2, f);
 		}
-		
+
 		void main(void)
 		{
 			float sdf = texture2D(u_texture, v_tex_coord).a;
-			
+
 			//float fw = fwidth(sdf)*0.5;
 			float fw = length(vec2(dFdx(sdf), dFdy(sdf)))*0.5;
-			
+
 			float alpha = aa_step(0.5 - fw, 0.5 + fw, sdf);
 			gl_FragColor = v_color*(v_color.a*alpha);
 //			gl_FragColor = vec4(1, 0, 0, 1);
 		}
 	));
-	
+
 	program = LinkProgram(vshader, fshader);
 	CHECK_GL_ERRORS();
-	
+
 //	GLint index = -1;//glGetUniformLocation(program, "u_texture");
 //	glUniform1i(index, 0);
 //	CHECK_GL_ERRORS();
-	
+
 	// Setu VBO and VAO.
 #if __APPLE__
 	glGenVertexArraysAPPLE(1, &vao);
@@ -108,14 +108,14 @@ ChipmunkDemoTextInit(void)
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
 #endif
-	
+
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	
+
 	SET_ATTRIBUTE(program, struct Vertex, vertex, GL_FLOAT);
 	SET_ATTRIBUTE(program, struct Vertex, tex_coord, GL_FLOAT);
 	SET_ATTRIBUTE(program, struct Vertex, color, GL_FLOAT);
-	
+
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 #if __APPLE__
 	glBindVertexArrayAPPLE(0);
@@ -123,7 +123,7 @@ ChipmunkDemoTextInit(void)
 	glBindVertexArray(0);
 #endif
 	CHECK_GL_ERRORS();
-	
+
 	// Load the SDF font texture.
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
@@ -134,7 +134,7 @@ ChipmunkDemoTextInit(void)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 	CHECK_GL_ERRORS();
-	
+
 	// Fill in the glyph index array.
 	for(int i=0; i<sdf_num_chars; i++){
 		int char_index = sdf_spacing[i*8];
@@ -155,7 +155,7 @@ static Triangle *PushTriangles(GLsizei count)
 		triangle_capacity += MAX(triangle_capacity, count);
 		triangle_buffer = (Triangle *)realloc(triangle_buffer, triangle_capacity*sizeof(Triangle));
 	}
-	
+
 	Triangle *buffer = triangle_buffer + triangle_count;
 	triangle_count += count;
 	return buffer;
@@ -167,30 +167,30 @@ PushChar(int character, GLfloat x, GLfloat y, cpSpaceDebugColor color)
 	int i = glyph_indexes[character];
 	GLfloat w = (GLfloat)sdf_tex_width;
 	GLfloat h = (GLfloat)sdf_tex_height;
-	
+
 	GLfloat gw = (GLfloat)sdf_spacing[i*8 + 3];
 	GLfloat gh = (GLfloat)sdf_spacing[i*8 + 4];
-	
+
 	GLfloat txmin = sdf_spacing[i*8 + 1]/w;
 	GLfloat tymin = sdf_spacing[i*8 + 2]/h;
 	GLfloat txmax = txmin + gw/w;
 	GLfloat tymax = tymin + gh/h;
-	
+
 	GLfloat s = Scale/scale_factor;
 	GLfloat xmin = x + sdf_spacing[i*8 + 5]/scale_factor*Scale;
 	GLfloat ymin = y + (sdf_spacing[i*8 + 6]/scale_factor - gh)*Scale;
 	GLfloat xmax = xmin + gw*Scale;
 	GLfloat ymax = ymin + gh*Scale;
-	
+
 	Vertex a = {{xmin, ymin}, {txmin, tymax}, color};
 	Vertex b = {{xmin, ymax}, {txmin, tymin}, color};
 	Vertex c = {{xmax, ymax}, {txmax, tymin}, color};
 	Vertex d = {{xmax, ymin}, {txmax, tymax}, color};
-	
+
 	Triangle *triangles = PushTriangles(2);
 	Triangle t0 = {a, b, c}; triangles[0] = t0;
 	Triangle t1 = {a, c, d}; triangles[1] = t1;
-	
+
 	return sdf_spacing[i*8 + 7]*s;
 }
 
@@ -201,7 +201,7 @@ ChipmunkDemoTextDrawString(cpVect pos, char const *str)
 {
 	cpSpaceDebugColor c = LAColor(1.0f, 1.0f);
 	GLfloat x = (GLfloat)pos.x, y = (GLfloat)pos.y;
-	
+
 	for(size_t i=0, len=strlen(str); i<len; i++){
 		if(str[i] == '\n'){
 			y -= LineHeight;
@@ -219,19 +219,19 @@ ChipmunkDemoTextFlushRenderer(void)
 {
 //	triangle_count = 0;
 //	ChipmunkDemoTextDrawString(cpv(-300, 0), "0.:,'");
-	
+
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Triangle)*triangle_count, triangle_buffer, GL_STREAM_DRAW);
-	
+
 	glUseProgram(program);
-	
+
 #if __APPLE__
 	glBindVertexArrayAPPLE(vao);
 #else
 	glBindVertexArray(vao);
 #endif
 	glDrawArrays(GL_TRIANGLES, 0, triangle_count*3);
-		
+
 	CHECK_GL_ERRORS();
 }
 

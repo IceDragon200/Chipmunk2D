@@ -264,7 +264,7 @@ What's new in 5.2.0:
  * API: Added assertion error messages as well as warnings and covered many new assertion cases.
  * FIX: separate() callbacks are called before shapes are removed from the space to prevent dangling pointers.
  * NEW: Added convenience functions for creating box shapes and calculating moments.
- 
+
 
 What's new in 5.1.0:
  * FIX: fixed a NaN issue that was causing raycasts for horizontal or vertical lines to end up in an infinite loop

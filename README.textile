@@ -2,7 +2,7 @@
 
 h2. NEW IN CHIPMUNK 7
 
-Chipmunk 7 is complete and now includes the ARM NEON optimizations, the autogeometry code, and the mulithreaded solver. 
+Chipmunk 7 is complete and now includes the ARM NEON optimizations, the autogeometry code, and the mulithreaded solver.
 
 The latest "programming guide":http://chipmunk-physics.net/release/ChipmunkLatest-Docs/ is available.
 
