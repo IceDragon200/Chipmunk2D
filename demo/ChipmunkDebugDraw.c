@@ -22,8 +22,8 @@
 #include <limits.h>
 #include <string.h>
 
-#include "GL/glew.h"
-#include "GLFW/glfw3.h"
+#include <GL/glew.h>
+#include "glfw_forward.h"
 
 #include "chipmunk/chipmunk_private.h"
 #include "ChipmunkDebugDraw.h"
