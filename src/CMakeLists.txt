@@ -56,7 +56,7 @@ if(BUILD_STATIC)
     set_target_properties(${CHIPMUNK_TARGET_LIBRARY_STATIC} PROPERTIES LINKER_LANGUAGE CXX)
   endif(MSVC)
   # Sets chipmunk_static to output "libchipmunk.a" not "libchipmunk_static.a"
-  set_target_properties(${CHIPMUNK_TARGET_LIBRARY_STATIC} PROPERTIES OUTPUT_NAME chipmunk)
+  #set_target_properties(${CHIPMUNK_TARGET_LIBRARY_STATIC} PROPERTIES OUTPUT_NAME chipmunk)
   if(INSTALL_STATIC)
     install(TARGETS ${CHIPMUNK_TARGET_LIBRARY_STATIC} ARCHIVE DESTINATION ${LIB_INSTALL_DIR})
   endif(INSTALL_STATIC)
